@@ -5,9 +5,13 @@ import ContactForm from './ContactForm';
 import Filter from './Filter';
 import css from './App.module.css';
 
-export function App() {
+const initalContacts = [];
+
+export default function App() {
   const [contacts, setContacts] = useState(() => {
-    return JSON.parse(window.localStorage.getItem('contacts')) ?? [];
+    return (
+      JSON.parse(window.localStorage.getItem('contacts')) ?? initalContacts
+    );
   });
 
   const [filter, setFilter] = useState('');
@@ -32,10 +36,6 @@ export function App() {
     ]);
   };
 
-  const handleInputChange = event => {
-    setFilter({ filter: event.target.value });
-  };
-
   const deleteContact = contactId => {
     setContacts(prevState =>
       prevState.filter(contact => contact.id !== contactId)
@@ -43,10 +43,9 @@ export function App() {
   };
 
   const getNormaliseContacts = () => {
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(filter.toLowerCase())
-    );
+    return contacts.filter(contact => contact.toLowerCase().includes(filter));
   };
+
   const newContacts = getNormaliseContacts();
 
   return (
@@ -56,7 +55,7 @@ export function App() {
       <h2 className={css.title}>Contacts</h2>
 
       {contacts.length !== 0 ? (
-        <Filter value={filter} onChange={handleInputChange} />
+        <Filter value={filter} onChange={e => setFilter(e.target.value)} />
       ) : (
         <p className={css.title}>{'The list is empty '}</p>
       )}
