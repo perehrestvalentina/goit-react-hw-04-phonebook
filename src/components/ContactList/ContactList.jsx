@@ -4,20 +4,19 @@ import css from './ContactList.module.css';
 const ContactList = ({ contacts, onDeleteInputContact }) => {
   return (
     <ul>
-      {contacts.map(({ id, name, number }) => {
-        return (
-          <li key={id} className={css.list__contact}>
-            {name}:{number}
-            <button
-              className={css.button}
-              onClick={() => onDeleteInputContact(id)}
-            >
-              {' '}
-              Delete
-            </button>
-          </li>
-        );
-      })}
+      {contacts.map(({ id, name, number }) => (
+        <li key={id} className={css.list__contact}>
+          {name}:{number}
+          <button
+            type="button"
+            name="delete"
+            className={css.button}
+            onClick={() => onDeleteInputContact(id)}
+          >
+            Delete
+          </button>
+        </li>
+      ))}
     </ul>
   );
 };
@@ -31,5 +30,4 @@ ContactList.propTypes = {
     })
   ),
 };
-
 export default ContactList;
