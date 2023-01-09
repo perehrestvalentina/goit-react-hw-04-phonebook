@@ -20,7 +20,7 @@ export default function App() {
     window.localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
 
-  const addNewContact = contact => {
+  function addNewContact(contact) {
     const inputContacts = contacts.some(
       ({ name }) => name.toLowerCase() === contact.name.toLowerCase()
     );
@@ -30,11 +30,12 @@ export default function App() {
       return;
     }
 
-    setContacts(prevContacts => [
-      ...prevContacts,
-      { id: shortid.generate(), ...contact },
-    ]);
-  };
+    const newPerson = {
+      id: shortid.generate(),
+      contact,
+    };
+    setContacts([newPerson, ...contacts]);
+  }
 
   const deleteContact = contactId => {
     setContacts(prevState =>
@@ -43,7 +44,10 @@ export default function App() {
   };
 
   const getNormaliseContacts = () => {
-    return contacts.filter(contact => contact.toLowerCase().includes(filter));
+    const normalizeFilter = filter.toLowerCase();
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(normalizeFilter)
+    );
   };
 
   const newContacts = getNormaliseContacts();
