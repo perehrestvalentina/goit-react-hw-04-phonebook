@@ -5,14 +5,17 @@ import ContactForm from './ContactForm';
 import Filter from './Filter';
 import css from './App.module.css';
 
-const initalContacts = [];
+const initalContacts = [
+  { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+  { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+  { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+  { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
+];
 
-export default function App() {
-  const [contacts, setContacts] = useState(() => {
-    return (
-      JSON.parse(window.localStorage.getItem('contacts')) ?? initalContacts
-    );
-  });
+export const App = () => {
+  const [contacts, setContacts] = useState(
+    () => JSON.parse(window.localStorage.getItem('contacts')) ?? initalContacts
+  );
 
   const [filter, setFilter] = useState('');
 
@@ -20,22 +23,21 @@ export default function App() {
     window.localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
 
-  function addNewContact(contact) {
+  const addNewContact = (name, number) => {
     const inputContacts = contacts.some(
-      ({ name }) => name.toLowerCase() === contact.name.toLowerCase()
+      contact => contact.name.toLowerCase() === name.toLowerCase()
     );
 
-    if (inputContacts) {
-      alert(`${contact.name} is already in contacts`);
-      return;
+    if (!inputContacts) {
+      setContacts(prevState => [
+        ...prevState,
+        { id: shortid.generate(), name, number },
+      ]);
+      return true;
     }
 
-    const newPerson = {
-      id: shortid.generate(),
-      contact,
-    };
-    setContacts([newPerson, ...contacts]);
-  }
+    alert(`${name} is already in contacts`);
+  };
 
   const deleteContact = contactId => {
     setContacts(prevState =>
@@ -43,12 +45,10 @@ export default function App() {
     );
   };
 
-  const getNormaliseContacts = () => {
-    const normalizeFilter = filter.toLowerCase();
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizeFilter)
+  const getNormaliseContacts = () =>
+    contacts.filter(({ name }) =>
+      name.toLowerCase().includes(filter.toLowerCase())
     );
-  };
 
   const newContacts = getNormaliseContacts();
 
@@ -58,8 +58,11 @@ export default function App() {
       <ContactForm onSubmit={addNewContact} />
       <h2 className={css.title}>Contacts</h2>
 
-      {contacts.length !== 0 ? (
-        <Filter value={filter} onChange={e => setFilter(e.target.value)} />
+      {contacts.length > 0 ? (
+        <Filter
+          value={filter}
+          onChange={event => setFilter(event.currentTarget.value)}
+        />
       ) : (
         <p className={css.title}>{'The list is empty '}</p>
       )}
@@ -70,4 +73,5 @@ export default function App() {
       />
     </div>
   );
-}
+};
+export default App;

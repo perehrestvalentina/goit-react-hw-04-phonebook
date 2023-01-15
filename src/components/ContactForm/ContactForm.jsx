@@ -1,12 +1,20 @@
 import { useState } from 'react';
 import css from './ContactForm.module.css';
 
-export default function ContactForm({ onSubmit }) {
+export const ContactForm = ({ onSubmit }) => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
+  const handleFormSubmit = event => {
+    event.preventDefault();
+    if (onSubmit(name, number)) {
+      setName('');
+      setNumber('');
+    }
+  };
+
   const handleChange = event => {
-    const { name, value } = event.target;
+    const { name, value } = event.currentTarget;
     switch (name) {
       case 'name':
         setName(value);
@@ -17,15 +25,6 @@ export default function ContactForm({ onSubmit }) {
       default:
         return;
     }
-  };
-  const reset = () => {
-    setName('');
-    setNumber('');
-  };
-  const handleFormSubmit = event => {
-    event.preventDefault();
-    onSubmit({ name, number });
-    reset();
   };
 
   return (
@@ -65,4 +64,5 @@ export default function ContactForm({ onSubmit }) {
       </button>
     </form>
   );
-}
+};
+export default ContactForm;
